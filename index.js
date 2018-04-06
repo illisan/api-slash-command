@@ -82,7 +82,7 @@ controller.setupWebserver(process.env.PORT, function (err, webserver) {
 controller.on('slash_command', function (slashCommand, message) {
 
     switch (message.command) {
-        case "/foodme": //handle the `/foodme` slash command. We might have others assigned to this app too!
+        case "/batfood": //handle the `/foodme` slash command. We might have others assigned to this app too!
 
             // Let's make sure the token matches. No imposters allowed!
             if (message.token !== process.env.VERIFICATION_TOKEN) return; //just ignore it.
@@ -103,13 +103,16 @@ controller.on('slash_command', function (slashCommand, message) {
                 ":strawberry:",":peach:",":melon:",":banana:",":pear:", 
                 ":pineapple:",":sweet_potato:",":eggplant:",":tomato:", 
                 ":corn:"];
-              // TODO Get three random foods
+                var food1 = foodmoji[Math.floor(Math.random() * foodmoji.length)];
+                var food2 = foodmoji[Math.floor(Math.random() * foodmoji.length)];
+                var food3 = foodmoji[Math.floor(Math.random() * foodmoji.length)];
+                slashCommand.replyPublic(message, "How about having " + food1 + " + " + food2 + " + " + food3 + " tonight?");
 
             }
 
             // /foodme help displays this message
             if (message.text === "help") {
-              slashCommand.replyPrivate(message, "Foodme is a Slack command" +
+              slashCommand.replyPublic(message, "Foodme is a Slack command" +
                 " that helps you find something to eat. Just type `/foodme`" +
                 " to start.")
             }
