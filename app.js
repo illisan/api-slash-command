@@ -66,7 +66,7 @@ controller.on('slash_command', function (slashCommand, message) {
                 ":thumbsup:", ":thumbsdown:", ":fire:",":raised_hands:", 
                 ":muscle:"];
                 let mood1 = moodmoji[Math.floor(Math.random() * moodmoji.length)]; //emoji randomizer
-                slashCommand.replyPublic(message, "Greetings ally are you feeling " + mood1 + " today?"); //prints a random moodmoji
+                slashCommand.replyPublic(message, "Greetings friend are you feeling " + mood1 + " today?"); //prints a random moodmoji
             }
 
             // if command is followed with the string "help" the reply will print out brief instructions and description of slash command.
