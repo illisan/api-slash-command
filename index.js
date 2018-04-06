@@ -1,126 +1,84 @@
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- ______    ______    ______   __  __    __    ______
- /\  == \  /\  __ \  /\__  _\ /\ \/ /   /\ \  /\__  _\
- \ \  __<  \ \ \/\ \ \/_/\ \/ \ \  _"-. \ \ \ \/_/\ \/
- \ \_____\ \ \_____\   \ \_\  \ \_\ \_\ \ \_\   \ \_\
- \/_____/  \/_____/    \/_/   \/_/\/_/  \/_/    \/_/
+
+let Botkit = require('botkit');
 
 
- This is a sample Slack Button application that provides a custom
- Slash command.
-
- This bot demonstrates many of the core features of Botkit:
-
- * Authenticate users with Slack using OAuth
- * Receive messages using the slash_command event
- * Reply to Slash command both publicly and privately
-
- # RUN THE BOT:
-
- Create a Slack app. Make sure to configure at least one Slash command!
-
- -> https://api.slack.com/applications/new
-
- Run your bot from the command line:
-
- clientId=<my client id> clientSecret=<my client secret> PORT=3000 node bot.js
-
- Note: you can test your oauth authentication locally, but to use Slash commands
- in Slack, the app must be hosted at a publicly reachable IP or host.
-
- # EXTEND THE BOT:
-
- Botkit is has many features for building cool and useful bots!
-
- Read all about it here:
-
- -> http://howdy.ai/botkit
-
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-/* Uses the slack button feature to offer a real time bot to multiple teams */
-var Botkit = require('botkit');
-
+// conditional to ensure authentication is properly processed, if any of the values are false, display error.
 if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET || !process.env.PORT || !process.env.VERIFICATION_TOKEN) {
     console.log('Error: Specify CLIENT_ID, CLIENT_SECRET, VERIFICATION_TOKEN and PORT in environment');
     process.exit(1);
 }
 
-var config = {}
+
+//configuration of settings, dection and storage of channels, teams and users.
+let config = {}
 if (process.env.MONGOLAB_URI) {
-    var BotkitStorage = require('botkit-storage-mongo');
+    let BotkitStorage = require('botkit-storage-mongo')
     config = {
         storage: BotkitStorage({mongoUri: process.env.MONGOLAB_URI}),
     };
 } else {
     config = {
         json_file_store: './db_slackbutton_slash_command/',
-    };
+    }
 }
 
-var controller = Botkit.slackbot(config).configureSlackApp(
+
+// objected stored in controller variable to manage the the requests coming in from the created slack app.
+// slack app hold details and credentials that must all be true in order for requests to be successfull.
+let controller = Botkit.slackbot(config).configureSlackApp(
     {
         clientId: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
         scopes: ['commands'],
     }
-);
+)
 
+//verfying the authentication of the app creator, ensure the creator has acccess to the created app before proceeding.
 controller.setupWebserver(process.env.PORT, function (err, webserver) {
-    controller.createWebhookEndpoints(controller.webserver);
+    controller.createWebhookEndpoints(controller.webserver)
 
     controller.createOauthEndpoints(controller.webserver, function (err, req, res) {
         if (err) {
-            res.status(500).send('ERROR: ' + err);
+            res.status(500).send('ERROR: ' + err)
         } else {
             res.send('Success!');
         }
-    });
-});
+    })
+})
 
-// EDIT ME!
+// Switch statement to handel the user input variations, using conditionals to print corresponding reply to the provided command.
 controller.on('slash_command', function (slashCommand, message) {
 
     switch (message.command) {
-        case "/batfood": //handle the `/foodme` slash command. We might have others assigned to this app too!
+        case "/batmood": //handle the `/batmood` slash command.
 
-            // Let's make sure the token matches. No imposters allowed!
-            if (message.token !== process.env.VERIFICATION_TOKEN) return; //just ignore it.
+            // Ensuring the token matches. 
+            if (message.token !== process.env.VERIFICATION_TOKEN) return; // if verification token is invalid, ignore command.
 
             if (message.text === "") {
-              // Master list of foodmoji
-              foodmoji = [":coffee:",":tea:",":sake:",":baby_bottle:", 
-                ":beer:",":beers:",":cocktail:",":tropical_drink:", 
-                ":wine_glass:",":fork_and_knife:",":pizza:",":hamburger:", 
-                ":fries:",":poultry_leg:",":meat_on_bone:",":spaghetti:", 
-                ":curry:",":fried_shrimp:",":bento:",":sushi:",":fish_cake:", 
-                ":rice_ball:",":rice_cracker:",":rice:",":ramen:",":stew:", 
-                ":oden:",":dango:",":egg:",":bread:",":doughnut:",":custard:", 
-                ":icecream:",":ice_cream:",":shaved_ice:",":birthday:", 
-                ":cake:",":cookie:",":chocolate_bar:",":candy:",":lollipop:", 
-                ":honey_pot:",":apple:",":green_apple:",":tangerine:", 
-                ":lemon:",":cherries:",":grapes:",":watermelon:", 
-                ":strawberry:",":peach:",":melon:",":banana:",":pear:", 
-                ":pineapple:",":sweet_potato:",":eggplant:",":tomato:", 
-                ":corn:"];
-                var food1 = foodmoji[Math.floor(Math.random() * foodmoji.length)];
-                var food2 = foodmoji[Math.floor(Math.random() * foodmoji.length)];
-                var food3 = foodmoji[Math.floor(Math.random() * foodmoji.length)];
-                slashCommand.replyPublic(message, "How about having " + food1 + " + " + food2 + " + " + food3 + " tonight?");
-
+                moodmoji = [":simple_smile:", ":blush:", ":relaxed:",":stuck_out_tongue_winking_eye:", 
+                ":grin:", ":sleeping:", ":worried:",":relieved:", 
+                ":wink:", ":anguished:", ":confused:",":hushed:", 
+                ":unamused:", ":expressionless:", ":weary:",":confounded:", 
+                ":cold_sweat:", ":fearful:", ":cry:", ":rage:",":neutral_face:", 
+                ":sob:", ":scream:", ":tired_face:", ":mask:",":sunglasses:", 
+                ":heart_eyes:", ":pensive:", ":joy:", ":persevere:", ":innocent:",":no_mouth:", 
+                ":thumbsup:", ":thumbsdown:", ":fire:",":raised_hands:", 
+                ":muscle:"];
+                let mood1 = moodmoji[Math.floor(Math.random() * moodmoji.length)]; //emoji randomizer
+                slashCommand.replyPublic(message, "Hello Mr.Wayne, are you feeling " + mood1 + " today?"); //prints a random moodmoji
             }
 
-            // /foodme help displays this message
+            // if command is followed with the string "help" the reply will print out brief instructions and description of slash command.
             if (message.text === "help") {
-              slashCommand.replyPublic(message, "Foodme is a Slack command" +
-                " that helps you find something to eat. Just type `/foodme`" +
-                " to start.")
+                slashCommand.replyPublic(message, "the batmood slash command helps batman decipher how he's feeling :open_mouth:" +
+                " Just type `/batmood`" )
             }
 
             break;
         default:
-            slashCommand.replyPublic(message, "I'm sorry " + message.user +
-                ", I'm afraid I can't do that. :robot_face:");
+            slashCommand.replyPublic(message, "Apologies " + message.user + //if command is invlaid, reply will print out the following:
+                ",command does not exist. :robot_face:");
 
     }
 
