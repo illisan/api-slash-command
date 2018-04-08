@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/illisan/command-test.git"
+    "url": "git+https://github.com/illisan/api-slash-command.git"
   },
   "keywords": [
     "slack",
